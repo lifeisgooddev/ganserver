@@ -15,7 +15,7 @@ from io import BytesIO
 import PIL.Image
 # import IPython.display
 # from google.colab import files
-import cv2
+# import cv2
 
 
 module_path = 'https://tfhub.dev/deepmind/biggan-512/2'
@@ -183,24 +183,24 @@ def imshow(a, format='png', jpeg_fallback=True):
         else:
             raise
     return disp
-def url_to_image(url):
-    resp = urllib.request.urlopen(url)
-    img = np.asarray(bytearray(resp.read()), dtype="uint8")
-    img = cv2.imdecode(img, cv2.IMREAD_COLOR)[...,::-1]
-    return img
+# def url_to_image(url):
+#     resp = urllib.request.urlopen(url)
+#     img = np.asarray(bytearray(resp.read()), dtype="uint8")
+#     img = cv2.imdecode(img, cv2.IMREAD_COLOR)[...,::-1]
+#     return img
 
-def classify_image(classifier, img):
-    h, w = hub.get_expected_image_size(classifier)
-    x = tf.placeholder(tf.float32, shape=(None, h, w, 3))
-    y = tf.nn.softmax(classifier(x))
-    data = transform.resize(img, [h, w])
-    with tf.Session().as_default() as sess:
-        tf.global_variables_initializer().run()
-        y_pred = sess.run(y, feed_dict={x: [data]})
-    return y_pred
+# def classify_image(classifier, img):
+#     h, w = hub.get_expected_image_size(classifier)
+#     x = tf.placeholder(tf.float32, shape=(None, h, w, 3))
+#     y = tf.nn.softmax(classifier(x))
+#     data = transform.resize(img, [h, w])
+#     with tf.Session().as_default() as sess:
+#         tf.global_variables_initializer().run()
+#         y_pred = sess.run(y, feed_dict={x: [data]})
+#     return y_pred
 
 
-classifier = hub.Module("https://tfhub.dev/google/imagenet/nasnet_large/classification/1")
+# classifier = hub.Module("https://tfhub.dev/google/imagenet/nasnet_large/classification/1")
 app = Flask(__name__, static_url_path='') #, static_folder='public', )
 CORS(app)
 
@@ -221,18 +221,18 @@ def get_random():
 
         # ims = sample(z, y)
         # imshow(imgrid(ims, cols=1))
-        img = url_to_image("https://www.itl.cat/pngfile/big/111-1118405_labrador-retriever-dog-hd-wallpapers-labrador-dog.jpg")
-        y_pred = classify_image(classifier, img)
+        # img = url_to_image("https://www.itl.cat/pngfile/big/111-1118405_labrador-retriever-dog-hd-wallpapers-labrador-dog.jpg")
+        # y_pred = classify_image(classifier, img)
 
-        num_samples = 1
-        truncation = 0.7
-        noise_seed = 32
+        # num_samples = 1
+        # truncation = 0.7
+        # noise_seed = 32
 
-        z = truncated_z_sample(num_samples, truncation, noise_seed)
-        y = np.vstack([y_pred[0][1:]]*num_samples)
+        # z = truncated_z_sample(num_samples, truncation, noise_seed)
+        # y = np.vstack([y_pred[0][1:]]*num_samples)
 
-        im0 = cv2.resize(img, (512, 512))
-        im1 = sample(z, y)
+        # im0 = cv2.resize(img, (512, 512))
+        # im1 = sample(z, y)
 
         num = int(request.form['num'])
         print('Random', num)
@@ -241,7 +241,7 @@ def get_random():
         
         print('Finished in', time.time()-t)
         response = jsonify([
-            [ encode_img(arr) for arr in im1 ],
+            [ encode_img(arr) for arr in imgs ],
             vectors.tolist(),
             labels.tolist()
         ])
